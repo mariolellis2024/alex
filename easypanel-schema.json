@@ -1,0 +1,54 @@
+{
+  "services": [
+    {
+      "type": "postgres",
+      "data": {
+        "serviceName": "app-postgres",
+        "image": "postgres:16",
+        "password": "$(password)"
+      }
+    },
+    {
+      "type": "redis",
+      "data": {
+        "serviceName": "app-redis",
+        "image": "redis:7",
+        "password": "$(password)"
+      }
+    },
+    {
+      "type": "postgres",
+      "data": {
+        "serviceName": "evo-postgres",
+        "image": "postgres:16",
+        "password": "$(password)"
+      }
+    },
+    {
+      "type": "redis",
+      "data": {
+        "serviceName": "evo-redis",
+        "image": "redis:7",
+        "password": "$(password)"
+      }
+    },
+    {
+      "type": "app",
+      "data": {
+        "serviceName": "evolution",
+        "source": { "type": "image", "image": "atendai/evolution-api:v2.1.1" },
+        "env": "AUTHENTICATION_API_KEY=$(password)\nDATABASE_ENABLED=true\nDATABASE_PROVIDER=postgresql\nDATABASE_CONNECTION_URI=postgres://postgres:$(password)@evo-postgres:5432/evolution\nCACHE_REDIS_ENABLED=true\nCACHE_REDIS_URI=redis://default:$(password)@evo-redis:6379",
+        "domains": [{ "host": "$(EASYPANEL_DOMAIN)", "port": 8080 }]
+      }
+    },
+    {
+      "type": "app",
+      "data": {
+        "serviceName": "app",
+        "source": { "type": "image", "image": "ghcr.io/mariolellis2024/alex:main" },
+        "env": "DATABASE_URL=postgres://postgres:$(password)@app-postgres:5432/app_db?schema=public\nREDIS_URL=redis://default:$(password)@app-redis:6379\nEVOLUTION_URL=http://evolution:8080\nEVOLUTION_API_KEY=$(password)\nAPP_URL=https://$(EASYPANEL_DOMAIN)",
+        "domains": [{ "host": "$(EASYPANEL_DOMAIN)", "port": 3000 }]
+      }
+    }
+  ]
+}
