@@ -41,11 +41,14 @@ COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Expose Prisma Schema for Migrations if needed
+# Expose Prisma Schema and CLI for Migrations
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
 COPY --from=builder --chown=nextjs:nodejs /app/prisma.config.ts ./
 COPY --from=builder --chown=nextjs:nodejs /app/docker-entrypoint.sh ./
 RUN chmod +x ./docker-entrypoint.sh
+
+# Install prisma CLI so migrate deploy + prisma.config.ts can run
+RUN npm install prisma --no-save
 
 USER nextjs
 
