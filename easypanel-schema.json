@@ -5,7 +5,7 @@
       "data": {
         "serviceName": "app-postgres",
         "image": "postgres:16",
-        "password": "$(password)"
+        "password": "Ce0hK1R0kqAEAbZa3mBiQjZY8fkxw9r"
       }
     },
     {
@@ -13,7 +13,7 @@
       "data": {
         "serviceName": "app-redis",
         "image": "redis:7",
-        "password": "$(password)"
+        "password": "AJ69MAvO8GDsJHRzJqPdZ0gqeZTLlA"
       }
     },
     {
@@ -21,7 +21,7 @@
       "data": {
         "serviceName": "evo-postgres",
         "image": "postgres:16",
-        "password": "$(password)"
+        "password": "FXtFwOznYBZolDM0ZHVEjWlIjnaM5VQH"
       }
     },
     {
@@ -29,16 +29,16 @@
       "data": {
         "serviceName": "evo-redis",
         "image": "redis:7",
-        "password": "$(password)"
+        "password": "AJ69MAvO8GDsJHRzJqPdZ0gqeZTLlA"
       }
     },
     {
       "type": "app",
       "data": {
         "serviceName": "evolution",
-        "source": { "type": "image", "image": "atendai/evolution-api:v2.1.1" },
-        "env": "AUTHENTICATION_API_KEY=$(password)\nDATABASE_ENABLED=true\nDATABASE_PROVIDER=postgresql\nDATABASE_CONNECTION_URI=postgres://postgres:$(password)@evo-postgres:5432/evolution\nCACHE_REDIS_ENABLED=true\nCACHE_REDIS_URI=redis://default:$(password)@evo-redis:6379",
-        "domains": [{ "host": "$(EASYPANEL_DOMAIN)", "port": 8080 }]
+        "source": { "type": "image", "image": "evoapicloud/evolution-api:v2.3.7" },
+        "env": "SERVER_URL=https://api.SEUDOMINIO.com.br\nAUTHENTICATION_API_KEY=Ce0hK1R0kqAEAbZa3mBiQjZY8fkxw9r\nDATABASE_ENABLED=true\nDATABASE_PROVIDER=postgresql\nDATABASE_CONNECTION_URI=postgres://postgres:FXtFwOznYBZolDM0ZHVEjWlIjnaM5VQH@$(PROJECT_NAME)_evo-postgres:5432/$(PROJECT_NAME)\nCACHE_REDIS_ENABLED=true\nCACHE_REDIS_URI=redis://default:AJ69MAvO8GDsJHRzJqPdZ0gqeZTLlA@$(PROJECT_NAME)_evo-redis:6379",
+        "domains": [{ "host": "api.SEUDOMINIO.com.br", "port": 8080 }]
       }
     },
     {
@@ -46,8 +46,8 @@
       "data": {
         "serviceName": "app",
         "source": { "type": "image", "image": "ghcr.io/mariolellis2024/alex:main" },
-        "env": "DATABASE_URL=postgres://postgres:$(password)@app-postgres:5432/app_db?schema=public\nREDIS_URL=redis://default:$(password)@app-redis:6379\nEVOLUTION_URL=http://evolution:8080\nEVOLUTION_API_KEY=$(password)\nAPP_URL=https://$(EASYPANEL_DOMAIN)",
-        "domains": [{ "host": "$(EASYPANEL_DOMAIN)", "port": 3000 }]
+        "env": "DATABASE_URL=postgres://postgres:Ce0hK1R0kqAEAbZa3mBiQjZY8fkxw9r@$(PROJECT_NAME)_app-postgres:5432/$(PROJECT_NAME)?schema=public\nREDIS_URL=redis://default:AJ69MAvO8GDsJHRzJqPdZ0gqeZTLlA@$(PROJECT_NAME)_app-redis:6379\nEVOLUTION_URL=http://$(PROJECT_NAME)_evolution:8080\nEVOLUTION_API_KEY=Ce0hK1R0kqAEAbZa3mBiQjZY8fkxw9r\nAPP_URL=https://alex.mariolellis.com\nNEXTAUTH_SECRET=troque_por_uma_chave_aleatoria_longa_9f3b1c7d2a884e6f",
+        "domains": [{ "host": "alex.mariolellis.com", "port": 3000 }]
       }
     }
   ]

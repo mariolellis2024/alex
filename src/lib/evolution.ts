@@ -14,13 +14,16 @@ const api = axios.create({
 export async function createInstance(instanceName: string) {
   const webhookUrl = `${process.env.APP_URL}/api/webhooks/evolution`;
   
+  // Evolution API v2: exige "integration" e webhook como objeto aninhado
   const res = await api.post("/instance/create", {
     instanceName,
-    token: instanceName, // Simplification
+    integration: "WHATSAPP-BAILEYS",
     qrcode: true,
-    webhook: webhookUrl,
-    webhookByEvents: true,
-    events: ["CONNECTION_UPDATE", "MESSAGES_UPSERT"],
+    webhook: {
+      url: webhookUrl,
+      byEvents: true,
+      events: ["CONNECTION_UPDATE", "MESSAGES_UPSERT"],
+    },
   });
   return res.data;
 }
@@ -41,9 +44,11 @@ export async function deleteInstance(instanceName: string) {
 }
 
 export async function setInstanceProxy(instanceName: string, proxy: { host: string, port: number, protocol: string, username?: string | null, password?: string | null }) {
+  // Evolution API v2: exige "enabled" e porta como string
   const res = await api.post(`/proxy/set/${instanceName}`, {
+    enabled: true,
     host: proxy.host,
-    port: proxy.port,
+    port: String(proxy.port),
     protocol: proxy.protocol, // http, https, socks5
     username: proxy.username || "",
     password: proxy.password || "",

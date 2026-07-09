@@ -39,15 +39,11 @@ export const funnelWorker = new Worker(
       try {
         const EVOLUTION_URL = process.env.EVOLUTION_URL || "http://localhost:8080";
         const API_KEY = process.env.EVOLUTION_API_KEY || "";
+        // Evolution API v2: "text" e "delay" ficam na raiz do payload
         await axios.post(`${EVOLUTION_URL}/message/sendText/${instanceName}`, {
           number: phone,
-          options: {
-            delay: 1200, // human-like typing
-            presence: "composing"
-          },
-          textMessage: {
-            text
-          }
+          text,
+          delay: 1200 // human-like typing
         }, {
           headers: {
             apikey: API_KEY,
