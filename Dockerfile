@@ -43,6 +43,8 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 # Expose Prisma Schema for Migrations if needed
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
+COPY --from=builder --chown=nextjs:nodejs /app/docker-entrypoint.sh ./
+RUN chmod +x ./docker-entrypoint.sh
 
 USER nextjs
 
@@ -50,4 +52,5 @@ EXPOSE 3000
 
 ENV PORT=3000
 
+ENTRYPOINT ["./docker-entrypoint.sh"]
 CMD ["node", "server.js"]

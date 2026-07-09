@@ -1,13 +1,60 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Settings {
+  id               String   @id @default(cuid())
+  publicDomain     String?
+  evolutionUrl     String?
+  evolutionApiKey  String?
+  setupCompleted   Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model Proxy {
+  id        String   @id @default(cuid())
+  host      String
+  port      Int
+  protocol  String   @default("http")
+  username  String?
+  password  String?
+  status    String   @default("ACTIVE")
+  lastCheck DateTime?
+  
+  connections Connection[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Connection {
+  id             String   @id @default(cuid())
+  instanceName   String   @unique
+  internalName   String
+  number         String?
+  status         String   @default("DISCONNECTED")
+  dailyLimit     Int      @default(50)
+  warmupState    Int      @default(0)
+  
+  proxyId        String?
+  proxy          Proxy?   @relation(fields: [proxyId], references: [id])
+  
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
