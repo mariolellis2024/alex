@@ -98,5 +98,5 @@ export const funnelWorker = new Worker(
       await prisma.funnelRun.update({ where: { id: runId }, data: { status: "COMPLETED" } });
     }
   },
-  { connection }
+  { connection: connection as any }
 );

@@ -44,5 +44,5 @@ export const proxyHealthWorker = new Worker(
       }
     }
   },
-  { connection }
+  { connection: connection as any }
 );
