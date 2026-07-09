@@ -1,8 +1,8 @@
 #!/bin/sh
 set -e
 
-echo "Running prisma migrate deploy..."
-npx prisma migrate deploy
+echo "Pushing database schema..."
+npx prisma db push --skip-generate
 
 echo "Starting Next.js..."
 exec "$@"
