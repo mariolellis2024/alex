@@ -41,6 +41,24 @@ export default async function DashboardLayout({
               Proxies
             </Link>
             <Link
+              href="/admin/dashboard/proxies"
+              className="block px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-colors"
+            >
+              Proxies
+            </Link>
+            <Link
+              href="/admin/dashboard/pixels"
+              className="block px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-colors"
+            >
+              Pixels (Meta CAPI)
+            </Link>
+            <Link
+              href="/admin/dashboard/tracking-links"
+              className="block px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-colors"
+            >
+              Links de Rastreio
+            </Link>
+            <Link
               href="/admin/dashboard/funnels"
               className="block px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-colors"
             >

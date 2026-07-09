@@ -58,3 +58,92 @@ model Connection {
   updatedAt      DateTime @updatedAt
 }
 
+model Pixel {
+  id              String   @id @default(cuid())
+  name            String
+  pixelId         String   @unique
+  capiToken       String
+  testEventCode   String?
+  trackingLinks   TrackingLink[]
+  capiEvents      CapiEvent[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model TrackingLink {
+  id                 String   @id @default(cuid())
+  code               String   @unique
+  destinationNumber  String?
+  initialMessage     String
+  pixelId            String?
+  pixel              Pixel?   @relation(fields: [pixelId], references: [id])
+  funnelId           String?
+  clicks             Click[]
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model Click {
+  id               String   @id @default(cuid())
+  trackingLinkId   String
+  trackingLink     TrackingLink @relation(fields: [trackingLinkId], references: [id])
+  fbclid           String?
+  fbp              String?
+  fbc              String?
+  ip               String?
+  userAgent        String?
+  utmSource        String?
+  utmMedium        String?
+  utmCampaign      String?
+  matchedLeadId    String?
+  lead             Lead?    @relation(fields: [matchedLeadId], references: [id])
+  createdAt        DateTime @default(now())
+}
+
+model Lead {
+  id             String   @id @default(cuid())
+  phone          String   @unique
+  name           String?
+  email          String?
+  isCustomer     Boolean  @default(false)
+  tags           String[]
+  clicks         Click[]
+  orders         Order[]
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Order {
+  id               String   @id @default(cuid())
+  kiwifyOrderId    String   @unique
+  leadId           String?
+  lead             Lead?    @relation(fields: [leadId], references: [id])
+  productName      String
+  amount           Int      // em centavos
+  status           String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model KiwifyWebhook {
+  id             String   @id @default(cuid())
+  eventId        String?
+  event          String
+  payload        Json
+  status         String   @default("PENDING")
+  createdAt      DateTime @default(now())
+}
+
+model CapiEvent {
+  id             String   @id @default(cuid())
+  pixelId        String
+  pixel          Pixel    @relation(fields: [pixelId], references: [id])
+  eventName      String
+  eventId        String
+  payload        Json
+  response       Json?
+  status         String   @default("PENDING")
+  createdAt      DateTime @default(now())
+}
+
+
