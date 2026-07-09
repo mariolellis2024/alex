@@ -4,7 +4,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -78,6 +77,7 @@ model TrackingLink {
   pixelId            String?
   pixel              Pixel?   @relation(fields: [pixelId], references: [id])
   funnelId           String?
+  funnel             Funnel?  @relation(fields: [funnelId], references: [id])
   clicks             Click[]
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
@@ -101,16 +101,17 @@ model Click {
 }
 
 model Lead {
-  id             String   @id @default(cuid())
-  phone          String   @unique
+  id             String      @id @default(cuid())
+  phone          String      @unique
   name           String?
   email          String?
-  isCustomer     Boolean  @default(false)
+  isCustomer     Boolean     @default(false)
   tags           String[]
   clicks         Click[]
   orders         Order[]
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  funnelRuns     FunnelRun[]
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
 }
 
 model Order {
@@ -146,4 +147,37 @@ model CapiEvent {
   createdAt      DateTime @default(now())
 }
 
+model Funnel {
+  id              String          @id @default(cuid())
+  name            String
+  description     String?
+  versions        FunnelVersion[]
+  trackingLinks   TrackingLink[]
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+}
 
+model FunnelVersion {
+  id              String          @id @default(cuid())
+  funnelId        String
+  funnel          Funnel          @relation(fields: [funnelId], references: [id])
+  version         Int             @default(1)
+  nodes           Json            @default("[]")
+  edges           Json            @default("[]")
+  isActive        Boolean         @default(false)
+  runs            FunnelRun[]
+  createdAt       DateTime        @default(now())
+}
+
+model FunnelRun {
+  id               String          @id @default(cuid())
+  funnelVersionId  String
+  funnelVersion    FunnelVersion   @relation(fields: [funnelVersionId], references: [id])
+  leadId           String
+  lead             Lead            @relation(fields: [leadId], references: [id])
+  status           String          @default("RUNNING")
+  currentNodeId    String?
+  state            Json?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+}

@@ -6,3 +6,4 @@ const connection = new Redis(process.env.REDIS_URL || "redis://localhost:6379", 
 });
 
 export const proxyHealthQueue = new Queue("proxy-health", { connection });
+export const funnelQueue = new Queue("funnel-engine", { connection });

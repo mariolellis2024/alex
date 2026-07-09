@@ -79,13 +79,36 @@ export async function POST(req: Request) {
               where: { id: click.id },
               data: { matchedLeadId: lead.id }
             });
-            
-            // At this point we could trigger the CAPI "Lead" event
-            // using the Pixel associated with the TrackingLink.
+
+            // Start Funnel if TrackingLink is tied to a Funnel
+            const link = await prisma.trackingLink.findUnique({ where: { id: click.trackingLinkId }});
+            if (link?.funnelId) {
+              const activeVersion = await prisma.funnelVersion.findFirst({
+                where: { funnelId: link.funnelId, isActive: true }
+              });
+
+              if (activeVersion) {
+                // Find start node
+                const nodes = (activeVersion.nodes as any[]) || [];
+                const startNode = nodes.find(n => n.id === 'start' || n.type === 'input');
+                
+                const run = await prisma.funnelRun.create({
+                  data: {
+                    funnelVersionId: activeVersion.id,
+                    leadId: lead.id,
+                    currentNodeId: startNode ? startNode.id : null,
+                    status: "RUNNING"
+                  }
+                });
+
+                // Import dynamically to avoid top-level issues if queue is not ready
+                const { funnelQueue } = await import("@/lib/queue");
+                await funnelQueue.add("run-funnel", { runId: run.id, instanceName: instance, phone }, { delay: 2000 });
+              }
+            }
           }
         }
         
-        // TODO: Phase 3 - Advance funnel if Lead is in one
       }
     }
 
